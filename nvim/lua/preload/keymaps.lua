@@ -1,1 +1,2 @@
-vim.keymap.set("n", "<leader>e", ":Ex<CR>")
+vim.keymap.set("n", "<leader>e", vim.cmd.Ex)
+
