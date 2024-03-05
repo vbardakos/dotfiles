@@ -1,4 +1,3 @@
-
 local function attach(bufnr)
   local gs = package.loaded.gitsigns
 
@@ -37,6 +36,7 @@ local function attach(bufnr)
   map('v', '<leader>hr', function()
     gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
   end, { desc = 'reset git hunk' })
+
   -- normal mode
   map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
   map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
@@ -62,7 +62,7 @@ end
 
 
 require("gitsigns").setup({
-  on_attach = function (bufnr)
+  on_attach = function(bufnr)
     attach(bufnr)
   end,
 })
