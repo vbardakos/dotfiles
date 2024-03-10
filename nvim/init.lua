@@ -1,5 +1,8 @@
 require("preload")
 
+-- Example for configuring Neovim to load user-installed installed Lua rocks:
+package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?/init.lua;"
+package.path = package.path .. ";" .. vim.fn.expand("$HOME") .. "/.luarocks/share/lua/5.1/?.lua;"
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
@@ -17,5 +20,13 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-	{ import = "plugins" },
+  spec = {{ import = "plugins" }},
+  defaults = { lazy = false },
+  checker = { enabled = true },
+  performance = {
+    rtp = { disable_plugins = { "gzip", "tohtml", "tutor", "zipPlugin" }}
+  }
 })
+
+vim.cmd.colorscheme("catppuccin")
+
