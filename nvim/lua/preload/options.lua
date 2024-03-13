@@ -14,7 +14,7 @@ vim.opt.expandtab = true
 vim.opt.smartindent = true
 
 -- line wrapping
-vim.opt.wrap = true
+vim.opt.wrap = false
 
 -- prevents default backups
 -- increases undotree history 
@@ -37,3 +37,8 @@ vim.opt.isfname:append("@-@")
 vim.opt.updatetime = 50
 -- vim.opt.colorcolumn = "80" -- side column
 
+-- netrw
+vim.g.netrw_banner = 0
+vim.g.netrw_liststyle = 3
+-- vim.g.netrw_browse_split = 4
+-- vim.g.netrw_winsize = 20
