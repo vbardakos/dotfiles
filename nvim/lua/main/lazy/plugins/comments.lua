@@ -7,13 +7,21 @@ return {
     opts = {
       signs = false,
       keywords = {
-        FIX = { icon = " ", color = "error", alt = { "FIXME", "BUG", "FIXIT", "ISSUE" } },
-        TODO = { icon = " ", color = "info" },
+        FIX = {
+          icon = " ",
+          color = "error",
+          alt = { "FIXME", "BUG", "FIXIT", "ISSUE", "fixme" },
+        },
+        TODO = { icon = " ", color = "info", alt = { "todo" } },
         HACK = { icon = " ", color = "warning" },
-        WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
-        PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
-        NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
-        TEST = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
+        WARN = { icon = " ", color = "warning", alt = { "WARNING", "warn" } },
+        PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE", "perf", "opt" } },
+        NOTE = { icon = " ", color = "hint", alt = { "INFO", "info" } },
+        TEST = {
+          icon = "⏲ ",
+          color = "test",
+          alt = { "TESTING", "PASSED", "FAILED", "passed", "failed" },
+        },
       },
       -- stylua: ignore start
       highlight = {
