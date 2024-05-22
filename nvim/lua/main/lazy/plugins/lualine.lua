@@ -1,5 +1,4 @@
 local lsp_name = function()
-  -- local msg = "No Active Lsp"
   local msg = ""
   local buf_ft = vim.api.nvim_buf_get_option(0, "filetype")
   local clients = vim.lsp.get_active_clients()
