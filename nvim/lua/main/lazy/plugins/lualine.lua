@@ -24,8 +24,12 @@ return {
       section_separators = "",
     },
     sections = {
-      -- stylua: ignore
-      lualine_a = { { "mode", fmt = function(str) return str:sub(1, 1) end, } },
+      lualine_a = { {
+        "mode",
+        fmt = function(str)
+          return str:sub(1, 1)
+        end,
+      } },
       lualine_b = {
         {
           "diagnostics",
@@ -35,13 +39,16 @@ return {
         { lsp_name, icon = " " },
       },
       lualine_c = {
-        -- stylua: ignore
-        { "filetype", fmt = function(_) return vim.fn.fnamemodify(vim.fn.expand("%:p"), ":~:.") end, },
+        {
+          "filetype",
+          fmt = function(_)
+            return vim.fn.fnamemodify(vim.fn.expand "%:p", ":~:.")
+          end,
+        },
       },
       lualine_x = {
         { "branch", icon = "" },
         { "diff", symbols = { added = " ", modified = "󰝤 ", removed = " " } },
-        -- { "o:encoding", fmt = string.upper },
       },
     },
   },
