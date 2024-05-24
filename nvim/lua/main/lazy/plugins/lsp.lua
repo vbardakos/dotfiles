@@ -139,6 +139,7 @@ return { -- LSP Configuration & Plugins
       ruff_lsp = {},
       rust_analyzer = {},
       gopls = {},
+      bashls = {},
       yamlls = {},
       marksman = {},
       lua_ls = {
