@@ -35,6 +35,8 @@ vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right win
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
 
+vim.keymap.set("n", "<leader>m", "<CMD>w | make %<CR>", { desc = "[M]ake current file" })
+
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -56,6 +58,15 @@ vim.api.nvim_create_autocmd("FileType", {
   callback = function(opts)
     if opts.match == "python" then
       vim.bo.makeprg = "python"
+    elseif opts.match == "rust" then
+      local fname = vim.fn.fnamemodify(vim.fn.expand "%:t", ":r")
+      -- local dest = vim.fn.expand("%:r").
+      -- --manifest-path
+      if fname == "main" then
+        vim.bo.makerpg = "cargo run"
+      else
+        vim.bo.makerpg = "cargo test " .. fname
+      end
     end
   end,
 })
