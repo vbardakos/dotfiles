@@ -3,11 +3,10 @@ return {
   name = "rose-pine",
   priority = 1000,
   opts = {
-    dim_inactive_windows = true,
+    -- dim_inactive_windows = true,
     styles = {
       bold = true,
       italic = true,
-      -- transparency = true,
     },
   },
   init = function()
