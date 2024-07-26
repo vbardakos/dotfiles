@@ -1,4 +1,4 @@
-return { -- Autocompletion
+return {
   "hrsh7th/nvim-cmp",
   event = "InsertEnter",
   dependencies = {
@@ -26,20 +26,25 @@ return { -- Autocompletion
     "saadparwaiz1/cmp_luasnip",
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-path",
+    "hrsh7th/cmp-emoji",
+    "onsails/lspkind.nvim",
   },
   config = function()
     -- See `:help cmp`
     local cmp = require "cmp"
     local luasnip = require "luasnip"
-    luasnip.config.setup {}
+    local lspkind = require "lspkind"
 
+    luasnip.config.setup {}
     cmp.setup {
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
         end,
       },
+      formatting = { format = lspkind.cmp_format() },
       completion = { completeopt = "menu,menuone,noinsert" },
+      experimental = { ghost_text = true },
 
       -- For an understanding of why these mappings were
       -- chosen, you will need to read `:help ins-completion`
@@ -91,6 +96,7 @@ return { -- Autocompletion
         { name = "nvim_lsp" },
         { name = "luasnip" },
         { name = "path" },
+        { name = "emoji" },
       },
     }
   end,
