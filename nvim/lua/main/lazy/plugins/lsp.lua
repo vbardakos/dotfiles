@@ -4,6 +4,7 @@ return { -- LSP Configuration & Plugins
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
     "WhoIsSethDaniel/mason-tool-installer.nvim",
+    { "towolf/vim-helm", ft = "helm" },
     { "j-hui/fidget.nvim", opts = {} },
     { "folke/neodev.nvim", opts = {} },
   },
@@ -133,14 +134,50 @@ return { -- LSP Configuration & Plugins
     --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
     local servers = {
       pyright = {
-        pyright = { disableOrganizeImports = true },
-        python = { analysis = { analysis = { ignore = "*", typeCheckingType = "off" } } },
+        capabilities = (function()
+          local py_capabilities = vim.lsp.protocol.make_client_capabilities()
+          py_capabilities.textDocument.publishDiagnostics.tagSupport.valueSet = { 2 }
+          return py_capabilities
+        end)(),
+        settings = {
+          python = {
+            analysis = {
+              useLibraryCodeForTypes = true,
+              diagnosticSeverityOverrides = {
+                reportUnusedVariable = "warning", -- or anything
+              },
+              typeCheckingMode = "basic",
+            },
+          },
+        },
       },
-      ruff_lsp = {},
+      ruff_lsp = {
+        on_attach = function(client, _)
+          client.server_capabilities.hoverProvider = false
+        end,
+      },
       rust_analyzer = {},
-      gopls = {},
+      -- gopls = {},
       bashls = {},
-      yamlls = {},
+      yamlls = {
+        completion = true,
+        schemas = {
+          kubernetes = "*.yaml",
+          ["http://json.schemastore.org/github-workflow"] = ".github/workflows/*",
+          ["http://json.schemastore.org/github-action"] = ".github/action.{yml,yaml}",
+          ["http://json.schemastore.org/ansible-stable-2.9"] = "roles/tasks/*.{yml,yaml}",
+          ["http://json.schemastore.org/prettierrc"] = ".prettierrc.{yml,yaml}",
+          ["http://json.schemastore.org/kustomization"] = "kustomization.{yml,yaml}",
+          ["http://json.schemastore.org/ansible-playbook"] = "*play*.{yml,yaml}",
+          ["http://json.schemastore.org/chart"] = "Chart.{yml,yaml}",
+          ["https://json.schemastore.org/dependabot-v2"] = ".github/dependabot.{yml,yaml}",
+          ["https://json.schemastore.org/gitlab-ci"] = "*gitlab-ci*.{yml,yaml}",
+          ["https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json"] = "*api*.{yml,yaml}",
+          ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = "*docker-compose*.{yml,yaml}",
+          ["https://raw.githubusercontent.com/argoproj/argo-workflows/master/api/jsonschema/schema.json"] = "*flow*.{yml,yaml}",
+        },
+      },
+      helm_ls = {},
       marksman = {},
       lua_ls = {
         -- cmd = {...},
