@@ -1,6 +1,7 @@
 return { -- Highlight, edit, and navigate code
   "nvim-treesitter/nvim-treesitter",
   build = ":TSUpdate",
+  dependencies = { "nvim-treesitter/playground" },
   opts = {
     ensure_installed = {
       "go",
@@ -13,6 +14,7 @@ return { -- Highlight, edit, and navigate code
       "vimdoc",
       "python",
       "rust",
+      "sql",
     },
     -- Autoinstall languages that are not installed
     auto_install = true,
@@ -24,6 +26,9 @@ return { -- Highlight, edit, and navigate code
       additional_vim_regex_highlighting = { "ruby" },
     },
     indent = { enable = true, disable = { "ruby" } },
+    playground = {
+      enable = true,
+    },
   },
   config = function(_, opts)
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`

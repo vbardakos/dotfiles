@@ -3,7 +3,6 @@ return {
   name = "rose-pine",
   priority = 1000,
   opts = {
-    -- dim_inactive_windows = true,
     styles = {
       bold = true,
       italic = true,
@@ -13,7 +12,7 @@ return {
     local palette = require "rose-pine.palette"
 
     vim.cmd.colorscheme "rose-pine"
-    -- vim.cmd.hi "Comment gui=none"
+    vim.cmd.hi "Comment gui=none"
     local highlight = "#26233a"
 
     vim.api.nvim_set_hl(0, "LineNrAbove", { fg = palette.muted })

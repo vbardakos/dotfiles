@@ -25,9 +25,11 @@ return {
     },
     "saadparwaiz1/cmp_luasnip",
     "hrsh7th/cmp-nvim-lsp",
+    "hrsh7th/cmp-buffer",
     "hrsh7th/cmp-path",
     "hrsh7th/cmp-emoji",
     "onsails/lspkind.nvim",
+    "kristijanhusak/vim-dadbod-completion",
   },
   config = function()
     -- See `:help cmp`
@@ -95,9 +97,17 @@ return {
       sources = {
         { name = "nvim_lsp" },
         { name = "luasnip" },
+        { name = "buffer" },
         { name = "path" },
         { name = "emoji" },
       },
     }
+
+    cmp.setup.filetype({ "sql" }, {
+      sources = {
+        { name = "vim-dadbod-completion" },
+        { name = "buffer" },
+      },
+    })
   end,
 }

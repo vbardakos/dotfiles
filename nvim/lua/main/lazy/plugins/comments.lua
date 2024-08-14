@@ -4,6 +4,7 @@ return {
     "folke/todo-comments.nvim",
     event = "VimEnter",
     dependencies = { "nvim-lua/plenary.nvim" },
+    cmd = { "TodoTrouble", "TodoTelescope" },
     opts = {
       signs = false,
       keywords = {
@@ -16,7 +17,7 @@ return {
         HACK = { icon = " ", color = "warning" },
         WARN = { icon = " ", color = "warning", alt = { "WARNING", "warn" } },
         PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE", "perf", "opt" } },
-        NOTE = { icon = " ", color = "hint", alt = { "INFO", "info" } },
+        NOTE = { icon = " ", color = "hint", alt = { "INFO", "info", "note" } },
         TEST = {
           icon = "⏲ ",
           color = "test",

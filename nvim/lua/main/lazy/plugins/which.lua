@@ -2,7 +2,8 @@ return {
   "folke/which-key.nvim",
   event = "VimEnter",
   config = function()
-    which = require "which-key"
+    local which = require "which-key"
+
     which.setup()
     which.add {
       { "<leader>c", group = "[C]ode" },
