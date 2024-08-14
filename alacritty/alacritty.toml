@@ -1,0 +1,45 @@
+live_config_reload = true
+import = ["~/personal/dotfiles/alacritty/rose-pine.toml"]
+
+[colors]
+draw_bold_text_with_bright_colors = true
+
+[cursor.style]
+blinking = "Off"
+shape = "Underline"
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = 20.0
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.bold_italic]
+family = "JetBrainsMono Nerd Font"
+style = "BoldItalic"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "MediumItalic"
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Medium"
+
+[[keyboard.bindings]]
+action = "SpawnNewInstance"
+key = "Return"
+mods = "Control"
+
+[window]
+decorations = "buttonless"
+dynamic_padding = false
+# opacity = 0.85
+
+[window.dimensions]
+columns = 155
+lines = 70
