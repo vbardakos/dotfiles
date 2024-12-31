@@ -100,6 +100,7 @@ opt.fillchars = {
 opt.jumpoptions = "view"
 opt.linebreak = true -- Wrap lines at convenient points
 
+
 opt.sessionoptions =
   { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
 opt.shiftround = true -- Round indent

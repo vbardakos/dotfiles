@@ -2,7 +2,7 @@ return {
   "stevearc/oil.nvim",
   config = function()
     require("oil").setup {
-      columns = { "icon", "size" },
+      columns = { "icon" }, -- "size" => filesize
       win_options = { signcolumn = "yes" },
       view_options = {
         is_hidden_file = function(name, _)
@@ -50,6 +50,21 @@ return {
         end,
       },
     }
-    vim.keymap.set("n", "<leader>o", "<CMD>Oil<CR>", { desc = "[O]il File Explorer" })
-  end,
+  vim.keymap.set("n", "<leader>o", "<CMD>Oil<CR>", { desc = "[O]il File Explorer" })
+
+  vim.api.nvim_create_autocmd("FileType", {
+    desc = "enable tmux navigation in oil",
+    group = vim.api.nvim_create_augroup("OilTmuxNav", { clear = true }),
+    pattern = { "oil" },
+    callback = function()
+      vim.schedule(function ()
+          vim.keymap.set("n", "<C-h>", "<CMD>TmuxNavigateLeft<cr>", { buffer = true })
+          vim.keymap.set("n", "<C-j>", "<CMD>TmuxNavigateDown<cr>", { buffer = true })
+          vim.keymap.set("n", "<C-k>", "<CMD>TmuxNavigateUp<cr>", { buffer = true })
+          vim.keymap.set("n", "<C-l>", "<CMD>TmuxNavigateRight<cr>", { buffer = true })
+      end)
+    end,
+  })
+
+  end
 }

@@ -161,7 +161,7 @@ return { -- LSP Configuration & Plugins
                 "FURB",
                 "RUF",
               },
-              extendIgnore = { "D1" },
+              ignore = { "D1" },
             },
             format = {
               preview = true,
@@ -190,7 +190,6 @@ return { -- LSP Configuration & Plugins
           ["https://raw.githubusercontent.com/argoproj/argo-workflows/master/api/jsonschema/schema.json"] = "*flow*.{yml,yaml}",
         },
       },
-      helm_ls = {},
       marksman = {},
       lua_ls = {
         -- cmd = {...},
