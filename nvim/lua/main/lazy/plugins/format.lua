@@ -1,13 +1,13 @@
 return { -- Autoformat
   "stevearc/conform.nvim",
-  lazy = false,
+  lazy = true,
   keys = {
     {
       "<leader>f",
       function()
-        require("conform").format { async = true, lsp_fallback = true }
+        require("conform").format { async = true, lsp_fallback = true, timeout_ms = 3000 }
       end,
-      mode = "",
+      mode = { "n", "v" },
       desc = "[F]ormat buffer",
     },
   },
@@ -26,12 +26,8 @@ return { -- Autoformat
     formatters_by_ft = {
       lua = { "stylua" },
       yaml = { "yamlfmt" },
-      -- Conform can also run multiple formatters sequentially
-      -- python = { "isort", "black" },
-      --
-      -- You can use a sub-list to tell conform to run *until* a formatter
-      -- is found.
-      -- javascript = { { "prettierd", "prettier" } },
+      sh = { "shfmt" },
+      zsh = { "shfmt" }
     },
   },
 }

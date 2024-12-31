@@ -1,8 +1,12 @@
 return {
-  { "numToStr/Comment.nvim", opts = {} },
+  { 
+    "numToStr/Comment.nvim", 
+    event = "VeryLazy",  -- orig: None
+    opts = {}
+  },
   {
     "folke/todo-comments.nvim",
-    event = "VimEnter",
+    event = "VeryLazy", -- orig: VimEnter
     dependencies = { "nvim-lua/plenary.nvim" },
     cmd = { "TodoTrouble", "TodoTelescope" },
     opts = {
@@ -41,3 +45,4 @@ return {
     },
   },
 }
+
