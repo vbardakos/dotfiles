@@ -1,3 +1,4 @@
+[general]
 live_config_reload = true
 import = ["~/personal/dotfiles/alacritty/rose-pine.toml"]
 
@@ -12,28 +13,30 @@ shape = "Underline"
 TERM = "xterm-256color"
 
 [font]
-size = 20.0
+size = 22.0
 
 [font.bold]
-family = "JetBrainsMono Nerd Font"
+family = "FiraCode Nerd Font"
 style = "Bold"
 
+# https://github.com/Avi-D-coder/FiraCode-italic
 [font.bold_italic]
-family = "JetBrainsMono Nerd Font"
-style = "BoldItalic"
+family = "Fira Code"
+style = "Bold Italic"
 
+# https://github.com/Avi-D-coder/FiraCode-italic
 [font.italic]
-family = "JetBrainsMono Nerd Font"
-style = "MediumItalic"
+family = "Fira Code"
+style = "Regular Italic"
 
 [font.normal]
-family = "JetBrainsMono Nerd Font"
-style = "Medium"
+family = "FiraCode Nerd Font"
+style = "Retina"
 
-[[keyboard.bindings]]
-action = "SpawnNewInstance"
-key = "Return"
-mods = "Control"
+# [[keyboard.bindings]]
+# action = "SpawnNewInstance"
+# key = "Return"
+# mods = "Control"
 
 [window]
 decorations = "buttonless"
