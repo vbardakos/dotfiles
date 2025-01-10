@@ -24,6 +24,11 @@ return { -- Autoformat
       }
     end,
     formatters_by_ft = {
+      python = {
+        "ruff_fix",
+        "ruff_format",
+        "ruff_organize_imports",
+      },
       lua = { "stylua" },
       yaml = { "yamlfmt" },
       sh = { "shfmt" },
