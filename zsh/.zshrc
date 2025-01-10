@@ -19,11 +19,6 @@ zinit wait lucid for \
 # zinit ice as"completion"
 # zinit snippet https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker
 
-zinit ice as"command" from"gh-r" \
-  atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
-	atpull"%atclone" src"init.zsh"
-zinit light starship/starship
-
 # load completions
 autoload -Uz compinit && compinit
 zinit cdreplay -q
@@ -52,8 +47,9 @@ zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 alias ls='ls --color'
 alias vim='nvim'
 alias c='clear'
+alias cat='bat'
 
 # Shell integrations
 eval "$(fzf --zsh)"
 eval "$(zoxide init --cmd cd zsh)"
-# eval "$(starship init zsh)"
+eval "$(starship init zsh)"
