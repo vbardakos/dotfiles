@@ -30,9 +30,9 @@ return {
     end
 
     -- lsp virtual text override
-    set_virtual_text_hl("hint", palette.highlight_low)
-    set_virtual_text_hl("info", palette.highlight_low)
-    set_virtual_text_hl("warn", palette.highlight_med)
-    set_virtual_text_hl("error", palette.highlight_high)
+    set_virtual_text_hl("hint", palette.overlay)
+    set_virtual_text_hl("info", palette.highlight_med)
+    set_virtual_text_hl("warn", palette.highlight_high)
+    set_virtual_text_hl("error", palette.subtle)
   end,
 }
