@@ -6,24 +6,26 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
+local make_augroup = vim.api.nvim_create_augroup("automake", { clear = true })
+
 vim.api.nvim_create_autocmd("FileType", {
-  desc = "nvim make automation",
-  group = vim.api.nvim_create_augroup("automake", { clear = true }),
+  desc = "Python make automation",
+  group = make_augroup,
   pattern = { "python" },
-  callback = function(opts)
-    if opts.match == "python" then
-      vim.bo.makeprg = "python"
-    elseif opts.match == "rust" then
-      local fname = vim.fn.fnamemodify(vim.fn.expand "%:t", ":r")
-      -- local dest = vim.fn.expand("%:r").
-      -- --manifest-path
-      if fname == "main" then
-        vim.bo.makerpg = "cargo run"
-      else
-        vim.bo.makerpg = "cargo test " .. fname
-      end
+  callback = function (_)
+    local current_file = vim.fn.expand('%:p')  -- Full path of the current file
+    local relative_path = current_file:sub(#vim.fn.getcwd() + 2)
+    local filename_without_extension = vim.fn.fnamemodify(relative_path, ':r')  -- Remove file extension
+    local relative_dest = filename_without_extension:gsub('/', '.')
+
+    if vim.env.VIRTUAL_ENV ~= nil then
+      vim.bo.makeprg = "python -m"
+    else
+      vim.bo.makeprg = "uv run -m"
     end
-  end,
+
+    vim.keymap.set("n", "<leader>r", "<CMD>silent make " .. relative_dest .. "<CR>", { desc = "[M]ake Python", silent = true })
+  end
 })
 
 vim.api.nvim_create_user_command("DiagnosticToggle", function()
