@@ -33,16 +33,15 @@ style = "Regular Italic"
 family = "FiraCode Nerd Font"
 style = "Retina"
 
-# [[keyboard.bindings]]
-# action = "SpawnNewInstance"
-# key = "Return"
-# mods = "Control"
+[[keyboard.bindings]]
+action = "ToggleViMode"
+key = "Return"
+mods = "Control"
 
 [window]
 decorations = "buttonless"
 dynamic_padding = false
-opacity = 0
-# opacity = 0.85
+opacity = 0.5
 
 [window.dimensions]
 columns = 155
