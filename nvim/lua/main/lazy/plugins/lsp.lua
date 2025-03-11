@@ -88,7 +88,7 @@ return { -- LSP Configuration & Plugins
     })
 
     vim.diagnostic.config {
-      virtual_text = { prefix = "●", spacing = 4, source = "if_many", hl_mode = "blend" },
+      virtual_text = { prefix = "●", source = "if_many" },
       signs = {
         text = {
           [vim.diagnostic.severity.HINT] = " ",
@@ -141,7 +141,6 @@ return { -- LSP Configuration & Plugins
                 "C",
                 "I",
                 "N",
-                "D",
                 "U",
                 "ASYNC",
                 "S",
@@ -179,7 +178,7 @@ return { -- LSP Configuration & Plugins
                 "FURB",
                 "RUF",
               },
-              ignore = { "D1" },
+              ignore = { "D" },
             },
             format = {
               preview = true,
@@ -188,7 +187,7 @@ return { -- LSP Configuration & Plugins
         },
       },
       rust_analyzer = {},
-      -- gopls = {},
+      gopls = {},
       bashls = {},
       yamlls = {
         completion = true,
