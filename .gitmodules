@@ -1,0 +1,3 @@
+[submodule "roles/themes/resources"]
+	path = roles/themes/resources
+	url = https://github.com/rose-pine/tm-theme.git
