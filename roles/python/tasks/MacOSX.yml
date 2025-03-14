@@ -1,0 +1,12 @@
+---
+- name: "[{{ role_name }}] Install Python UV ({{ ansible_distribution }})"
+  ansible.builtin.command: which uv
+  register: uv_installed
+  ignore_errors: true
+  changed_when: false
+
+- name: "[{{ role_name }}] Install Python UV ({{ ansible_distribution }})"
+  community.general.homebrew:
+    name: uv
+    state: present
+  when: uv_installed.rc != 0
