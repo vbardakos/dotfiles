@@ -189,6 +189,7 @@ return { -- LSP Configuration & Plugins
       rust_analyzer = {},
       gopls = {},
       bashls = {},
+      ansiblels = {},
       yamlls = {
         completion = true,
         schemas = {
