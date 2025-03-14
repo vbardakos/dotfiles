@@ -1,0 +1,58 @@
+---
+- name: "[{{ role_name }}] Checking for Distribution Config: {{ ansible_distribution }}"
+  ansible.builtin.stat:
+    path: "{{ role_path }}/tasks/{{ ansible_distribution }}.yml"
+  register: tmux_distribution_config
+
+- name: "[{{ role_name }}] Run Tasks: {{ ansible_distribution }}"
+  ansible.builtin.include_tasks: "{{ ansible_distribution }}.yml"
+  when: tmux_distribution_config.stat.exists
+
+- name: "[{{ role_name }}] Install TPM"
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.tmux"
+  register: tpm_directory
+
+- name: "[{{ role_name }}] Install TPM"
+  ansible.builtin.git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: "{{ ensible_env.HOME }}/.tmux/plugins/tpm"
+  when: not tpm_directory.stat.exists
+
+- name: "[{{ role_name }}] Make directory @ {{ ansible_env.XDG_CONFIG_HOME }}"
+  ansible.builtin.file:
+    path: "{{ ansible_env.XDG_CONFIG_HOME }}/tmux/"
+    mode: "0755"
+    state: directory
+    force: true
+
+- name: "[{{ role_name }}] Configure - Link Config"
+  ansible.builtin.file:
+    src: "{{ role_path }}/sources/tmux.conf"
+    dest: "{{ ansible_env.XDG_CONFIG_HOME }}/tmux/tmux.conf"
+    mode: "0777"
+    state: link
+  register: link_status
+  changed_when: link_status.changed
+
+- name: "[{{ role_name }}] Configure - Activate tmp session"
+  ansible.builtin.command: tmux new-session -d -s ansible_tmux_setup
+  when: link_status.changed
+
+- name: "[{{ role_name }}] Configure - Source file"
+  ansible.builtin.command: tmux source $XDG_CONFIG_HOME/tmux/tmux.conf
+  when: link_status.changed
+
+- name: "[{{ role_name }}] Configure - Activate tmp session"
+  ansible.builtin.command: tmux kill-server
+  when: link_status.changed
+
+- name: "[{{ role_name }}] TPM plugins - Check if TPM plugins installed"
+  ansible.builtin.find:
+    path: "{{ ansible_env.HOME }}/.tmux/plugins"
+    file_type: directory
+  register: found_plugins
+
+- name: "[{{ role_name }}] TPM plugins - Install"
+  ansible.builtin.command: $HOME/.tmux/plugins/tpm/bin/install_plugins
+  when: found_plugins.files | map(attribute='path') | reject('search', '/tpm$') | list | length == 0

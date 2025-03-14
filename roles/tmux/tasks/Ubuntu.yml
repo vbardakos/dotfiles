@@ -1,0 +1,6 @@
+---
+- name: "[{{ role_name }}] Install tmux ({{ ansible_distribution }})"
+  ansible.builtin.apt:
+    name: tmux
+    state: present
+  become: true
