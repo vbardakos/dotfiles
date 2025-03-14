@@ -1,6 +1,6 @@
 [general]
 live_config_reload = true
-import = ["~/personal/dotfiles/alacritty/rose-pine-moon.toml"]
+import = ["./rose-pine-moon.toml"]
 
 [colors]
 draw_bold_text_with_bright_colors = true

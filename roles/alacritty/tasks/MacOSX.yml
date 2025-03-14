@@ -1,0 +1,11 @@
+---
+- name: "[{{ role_name }}] Install Alacritty ({{ ansible_distribution }})"
+  ansible.builtin.stat:
+    path: /Applications/Alacritty.app
+  register: alacritty_stat
+
+- name: "[{{ role_name }}] Install Alacritty ({{ ansible_distribution }})"
+  ansible.builtin.homebrew_cask:
+    name: alacritty
+    state: present
+  when: not alacritty_stat.stat.exists
