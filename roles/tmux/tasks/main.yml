@@ -43,11 +43,11 @@
   ansible.builtin.command: tmux source $XDG_CONFIG_HOME/tmux/tmux.conf
   when: link_status.changed
 
-- name: "[{{ role_name }}] Configure - Activate tmp session"
+- name: "[{{ role_name }}] Configure - Kill tmp session"
   ansible.builtin.command: tmux kill-server
   when: link_status.changed
 
-- name: "[{{ role_name }}] TPM plugins - Check if TPM plugins installed"
+- name: "[{{ role_name }}] TPM plugins - Install"
   ansible.builtin.find:
     path: "{{ ansible_env.HOME }}/.tmux/plugins"
     file_type: directory
@@ -56,3 +56,6 @@
 - name: "[{{ role_name }}] TPM plugins - Install"
   ansible.builtin.command: $HOME/.tmux/plugins/tpm/bin/install_plugins
   when: found_plugins.files | map(attribute='path') | reject('search', '/tpm$') | list | length == 0
+
+- name: "[{{ role_name }}] TPM plugins - Update"
+  ansible.builtin.command: $HOME/.tmux/plugins/tpm/bin/update_plugins
