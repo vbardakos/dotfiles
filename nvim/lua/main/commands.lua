@@ -32,15 +32,15 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
-local jsonfmt_autgroup = vim.api.nvim_create_augroup("jsonformatprg", { clear = true })
-vim.api.nvim_create_autocmd("FileType", {
-  desc = "Json formatter",
-  group = jsonfmt_autgroup,
-  pattern = "json",
-  callback = function(_)
-    vim.keymap.set("n", "<leader>f", "<CMD>%!jq '.'<CR>", { desc = "[F]ormat Json" })
-  end,
-})
+-- local jsonfmt_autgroup = vim.api.nvim_create_augroup("jsonformatprg", { clear = true })
+-- vim.api.nvim_create_autocmd("FileType", {
+--   desc = "Json formatter",
+--   group = jsonfmt_autgroup,
+--   pattern = "json",
+--   callback = function(_)
+--     vim.keymap.set("n", "<leader>f", "<CMD>%!jq '.'<CR>", { desc = "[F]ormat Json" })
+--   end,
+-- })
 
 vim.api.nvim_create_user_command("DiagnosticToggle", function()
   local config = vim.diagnostic.config
