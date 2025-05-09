@@ -1,0 +1,5 @@
+---
+- name: "[{{ role_name }}] Install Starship ({{ ansible_distribution }})"
+  community.general.homebrew:
+    name: starship
+    state: present
