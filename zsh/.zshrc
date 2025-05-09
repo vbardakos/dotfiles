@@ -28,6 +28,7 @@ HISTSIZE=5000
 HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
+
 setopt appendhistory
 setopt sharehistory
 setopt hist_ignore_space
@@ -48,6 +49,10 @@ alias ls='ls --color'
 alias vim='nvim'
 alias c='clear'
 alias cat='bat'
+alias kvim='ps -ef | grep "vim" | grep -v grep | awk '{print $2}' | xargs kill -9'
+alias ta='tmux attach'
+alias td='tmux detach'
+alias tt='tmux'
 
 # Shell integrations
 eval "$(fzf --zsh)"
