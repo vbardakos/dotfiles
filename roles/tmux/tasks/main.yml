@@ -16,7 +16,7 @@
 - name: "[{{ role_name }}] Install TPM"
   ansible.builtin.git:
     repo: https://github.com/tmux-plugins/tpm
-    dest: "{{ ensible_env.HOME }}/.tmux/plugins/tpm"
+    dest: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
   when: not tpm_directory.stat.exists
 
 - name: "[{{ role_name }}] Make directory @ {{ ansible_env.XDG_CONFIG_HOME }}"
@@ -38,24 +38,29 @@
 - name: "[{{ role_name }}] Configure - Activate tmp session"
   ansible.builtin.command: tmux new-session -d -s ansible_tmux_setup
   when: link_status.changed
+  changed_when: false
 
 - name: "[{{ role_name }}] Configure - Source file"
   ansible.builtin.command: tmux source $XDG_CONFIG_HOME/tmux/tmux.conf
   when: link_status.changed
+  changed_when: false
 
 - name: "[{{ role_name }}] Configure - Kill tmp session"
   ansible.builtin.command: tmux kill-server
   when: link_status.changed
+  changed_when: false
 
 - name: "[{{ role_name }}] TPM plugins - Install"
   ansible.builtin.find:
     path: "{{ ansible_env.HOME }}/.tmux/plugins"
     file_type: directory
+    depth: 1
   register: found_plugins
 
 - name: "[{{ role_name }}] TPM plugins - Install"
   ansible.builtin.command: $HOME/.tmux/plugins/tpm/bin/install_plugins
-  when: found_plugins.files | map(attribute='path') | reject('search', '/tpm$') | list | length == 0
+  changed_when: false
 
 - name: "[{{ role_name }}] TPM plugins - Update"
-  ansible.builtin.command: $HOME/.tmux/plugins/tpm/bin/update_plugins
+  ansible.builtin.command: $HOME/.tmux/plugins/tpm/bin/update_plugins all
+  changed_when: false
