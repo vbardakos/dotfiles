@@ -1,6 +1,6 @@
 return { -- Autoformat
   "stevearc/conform.nvim",
-  lazy = true,  -- remove for changes
+  lazy = true, -- remove for changes
   keys = {
     {
       "<leader>f",
@@ -33,6 +33,7 @@ return { -- Autoformat
       yaml = { "yamlfmt" },
       sh = { "shfmt" },
       zsh = { "shfmt" },
+      rust = { "rustfmt", lsp_format = "fallback" },
     },
   },
 }
