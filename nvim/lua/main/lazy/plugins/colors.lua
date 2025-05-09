@@ -21,7 +21,7 @@ return {
 
     -- deep orange #ff966c
     -- stylua: ignore
-    vim.api.nvim_set_hl( 0, "CursorLineNR", { fg = palette.gold, bg = highlight, bold = true })
+    vim.api.nvim_set_hl(0, "CursorLineNR", { fg = palette.gold, bg = highlight, bold = true })
 
     local set_virtual_text_hl = function(level, fg)
       local capitalised = level:sub(1, 1):upper() .. level:sub(2):lower()
