@@ -41,7 +41,7 @@ mods = "Control"
 [window]
 decorations = "buttonless"
 dynamic_padding = false
-opacity = 0.5
+opacity = 1
 
 [window.dimensions]
 columns = 155
