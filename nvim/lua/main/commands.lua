@@ -7,16 +7,15 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 local make_augroup = vim.api.nvim_create_augroup("automake", { clear = true })
-
 vim.api.nvim_create_autocmd("FileType", {
   desc = "Python make automation",
   group = make_augroup,
   pattern = { "python" },
-  callback = function (_)
-    local current_file = vim.fn.expand('%:p')  -- Full path of the current file
+  callback = function(_)
+    local current_file = vim.fn.expand "%:p" -- Full path of the current file
     local relative_path = current_file:sub(#vim.fn.getcwd() + 2)
-    local filename_without_extension = vim.fn.fnamemodify(relative_path, ':r')  -- Remove file extension
-    local relative_dest = filename_without_extension:gsub('/', '.')
+    local filename_without_extension = vim.fn.fnamemodify(relative_path, ":r") -- Remove file extension
+    local relative_dest = filename_without_extension:gsub("/", ".")
 
     if vim.env.VIRTUAL_ENV ~= nil then
       vim.bo.makeprg = "python -m"
@@ -24,8 +23,23 @@ vim.api.nvim_create_autocmd("FileType", {
       vim.bo.makeprg = "uv run -m"
     end
 
-    vim.keymap.set("n", "<leader>r", "<CMD>silent make " .. relative_dest .. "<CR>", { desc = "[M]ake Python", silent = true })
-  end
+    vim.keymap.set(
+      "n",
+      "<leader>r",
+      "<CMD>silent make " .. relative_dest .. "<CR>",
+      { desc = "[M]ake Python", silent = true }
+    )
+  end,
+})
+
+local jsonfmt_autgroup = vim.api.nvim_create_augroup("jsonformatprg", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+  desc = "Json formatter",
+  group = jsonfmt_autgroup,
+  pattern = "json",
+  callback = function(_)
+    vim.keymap.set("n", "<leader>f", "<CMD>%!jq '.'<CR>", { desc = "[F]ormat Json" })
+  end,
 })
 
 vim.api.nvim_create_user_command("DiagnosticToggle", function()
@@ -98,6 +112,12 @@ vim.api.nvim_create_user_command("RootStatement", function()
   -- print(result)
   -- return result
 end, { desc = "get root statement" })
+
+vim.api.nvim_create_user_command("WinEnc", function()
+  if vim.bo.fileencoding == "latin1" then
+    vim.cmd "e ++encoding=windows-1253"
+  end
+end, {})
 
 vim.keymap.set("n", "<leader>zz", "<cmd>:RootStatement<CR>")
 -- vim.keymap.set("n", "<leader>xx", "<cmd>:RootStatement<space>S<CR>")
