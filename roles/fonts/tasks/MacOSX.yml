@@ -1,0 +1,4 @@
+---
+- name: "[{{ role_name }}] Assign font destination ({{ ansible_distribution }})"
+  ansible.builtin.set_fact:
+    dest_dir: "/Library/Fonts"

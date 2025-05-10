@@ -1,0 +1,11 @@
+---
+- name: "[{{ role_name }}] Assign font destination ({{ ansible_distribution }})"
+  ansible.builtin.set_fact:
+    dest_dir: "/usr/local/share/fonts/truetype/dotfiles"
+
+- name: "[{{ role_name }}] Create destination ({{ ansible_distribution }})"
+  file:
+    path: "{{ dest_dir }}"
+    state: directory
+    mode: '0755'
+  become: true

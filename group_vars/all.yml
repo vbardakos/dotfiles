@@ -1,4 +1,5 @@
 default_roles:
+  - fonts
   - tmux
   - alacritty
   - starship
