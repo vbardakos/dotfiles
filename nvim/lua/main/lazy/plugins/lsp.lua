@@ -187,9 +187,6 @@ return { -- LSP Configuration & Plugins
         },
       },
       rust_analyzer = {},
-      jdtls = {
-        root_dir = require("lspconfig").util.root_pattern(".git", "mvnw", "gradlew", "pom.xml", "build.gradle"),
-      },
       gopls = {},
       bashls = {},
       ansiblels = {},
@@ -254,7 +251,5 @@ return { -- LSP Configuration & Plugins
         end,
       },
     }
-
-    vim.lsp.enable "jdtls"
   end,
 }
