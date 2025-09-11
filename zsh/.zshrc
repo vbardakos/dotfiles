@@ -53,6 +53,8 @@ alias kvim='ps -ef | grep "vim" | grep -v grep | awk '{print $2}' | xargs kill -
 alias ta='tmux attach'
 alias td='tmux detach'
 alias tt='tmux'
+alias pa='source .venv/bin/activate'
+alias pd='deactivate'
 
 # Shell integrations
 eval "$(fzf --zsh)"
