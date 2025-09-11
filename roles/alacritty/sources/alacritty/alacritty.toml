@@ -14,24 +14,24 @@ TERM = "xterm-256color"
 
 [font]
 size = 22.0
+# Fallbacks
+builtin_box_drawing = false
 
 [font.bold]
-family = "FiraCode Nerd Font"
+family = "JetBrainsMono Nerd Font"
 style = "Bold"
 
-# https://github.com/Avi-D-coder/FiraCode-italic
 [font.bold_italic]
-family = "Fira Code"
+family = "JetBrainsMono Nerd Font"
 style = "Bold Italic"
 
-# https://github.com/Avi-D-coder/FiraCode-italic
 [font.italic]
-family = "Fira Code"
-style = "Regular Italic"
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
 
 [font.normal]
-family = "FiraCode Nerd Font"
-style = "Retina"
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
 
 [[keyboard.bindings]]
 action = "ToggleViMode"
