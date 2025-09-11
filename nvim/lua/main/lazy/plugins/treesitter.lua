@@ -9,6 +9,7 @@ return { -- Highlight, edit, and navigate code
     -- require("nvim-treesitter.configs").setup(opts)
     require("nvim-treesitter.configs").setup {
       ensure_installed = {
+        "yaml",
         "bash",
         "html",
         "lua",
@@ -31,6 +32,17 @@ return { -- Highlight, edit, and navigate code
       },
       indent = { enable = true, disable = { "ruby" } },
     }
+
+    -- -- Add support for .dag files using the yaml parser
+    -- local parsers = require "nvim-treesitter.parsers"
+    -- local super_ft_to_lang = parsers.ft_to_lang
+    --
+    -- parsers.ft_to_lang = function(ft)
+    --   if ft == "dag" then
+    --     return super_ft_to_lang "yaml"
+    --   end
+    --   return super_ft_to_lang(ft)
+    -- end
 
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:

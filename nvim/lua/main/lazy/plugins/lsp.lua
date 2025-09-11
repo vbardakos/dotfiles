@@ -187,6 +187,9 @@ return { -- LSP Configuration & Plugins
         },
       },
       rust_analyzer = {},
+      jdtls = {
+        root_dir = require("lspconfig").util.root_pattern(".git", "mvnw", "gradlew", "pom.xml", "build.gradle"),
+      },
       gopls = {},
       bashls = {},
       ansiblels = {},
@@ -232,8 +235,6 @@ return { -- LSP Configuration & Plugins
     --  You can press `g?` for help in this menu.
     require("mason").setup()
 
-    -- You can add other tools here that you want Mason to install
-    -- for you, so that they are available from within Neovim.
     local ensure_installed = vim.tbl_keys(servers or {})
     vim.list_extend(ensure_installed, {
       "stylua", -- Used to format Lua code
@@ -253,5 +254,7 @@ return { -- LSP Configuration & Plugins
         end,
       },
     }
+
+    vim.lsp.enable "jdtls"
   end,
 }
