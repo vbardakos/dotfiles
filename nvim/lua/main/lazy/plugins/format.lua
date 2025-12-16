@@ -29,6 +29,7 @@ return { -- Autoformat
         "ruff_format",
         "ruff_organize_imports",
       },
+      nix = { "nixpkgs-fmt" },
       lua = { "stylua" },
       yaml = { "yamlfmt" },
       sh = { "shfmt" },

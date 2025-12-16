@@ -109,6 +109,7 @@ return { -- LSP Configuration & Plugins
       vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
     local servers = {
+      ["rnix-lsp"] = {},
       pyright = {
         settings = {
           pyright = {
