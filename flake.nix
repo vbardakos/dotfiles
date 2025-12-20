@@ -50,84 +50,89 @@
         in
         {
           type = "app";
-          program = pkgs.writeShellApplication {
-            name = "apply";
-            runtimeInputs = [ pkgs.coreutils pkgs.nix ];
-            text = ''
-                        set -euo pipefail
-                        usage() {
-                          echo "Usage: nix run .#apply -- --username <name> --home <dir> [--system <triple>]"
-                          echo "  Example (Linux): nix run .#apply -- --username ${USER} --home ${HOME} --system ${pkgs.stdenv.hostPlatform.system}"
-                        }
-                        USERNAME=""
-                        HOME_DIR=""
-                        SYSTEM="${SYSTEM:-${pkgs.stdenv.hostPlatform.system}}"
-                        while [ $# -gt 0 ]; do
-                          case "$1" in
-                            --username) USERNAME="$2"; shift 2;;
-                            --home)     HOME_DIR="$2"; shift 2;;
-                            --system)   SYSTEM="$2";   shift 2;;
-                            -h|--help)  usage; exit 0;;
-                            *) echo "Unknown arg: $1"; usage; exit 2;;
-                          esac
-                        done
-                        if [ -z "$USERNAME" ] || [ -z "$HOME_DIR" ]; then
-                          echo "Error: --username and --home are required."; usage; exit 2
-                        fi
-                        echo "[apply] system=$SYSTEM user=$USERNAME home=$HOME_DIR"
-                        nix build .#homeConfigurationsDynamic \
-                          --argstr system "$SYSTEM" \
-                          --argstr username "$USERNAME" \
-                          --argstr homeDir "$HOME_DIR"
-                        echo "[apply] activating..."
-                        ./result/activate
-                        echo "[apply] done."
-                      '';
-                    } + "/bin/apply";
-                  };
+          program = pkgs.writeShellApplication
+            {
+              name = "apply";
+              runtimeInputs = [ pkgs.coreutils pkgs.nix ];
+              text = ''
+                set -euo pipefail
+                usage() {
+                  echo "Usage: nix run .#apply -- --username <name> --home <dir> [--system <triple>]"
+                  # echo "  Example (Linux): nix run .#apply -- --username ${USER} --home ${HOME} --system ${pkgs.stdenv.hostPlatform.system}"
+                }
+                USERNAME=""
+                HOME_DIR=""
+                DEFAULT_SYSTEM="${pkgs.stdenv.hostPlatform.system}"
+                SYSTEM="$DEFAULT_SYSTEM"
+                while [ $# -gt 0 ]; do
+                  case "$1" in
+                    --username) USERNAME="$2"; shift 2;;
+                    --home)     HOME_DIR="$2"; shift 2;;
+                    --system)   SYSTEM="$2";   shift 2;;
+                    -h|--help)  usage; exit 0;;
+                    *) echo "Unknown arg: $1"; usage; exit 2;;
+                  esac
+                done
+                if [ -z "$USERNAME" ] || [ -z "$HOME_DIR" ]; then
+                  echo "Error: --username and --home are required."; usage; exit 2
+                fi
+                echo "[apply] system=$SYSTEM user=$USERNAME home=$HOME_DIR"
+                nix build .#homeConfigurationsDynamic \
+                  --argstr system "$SYSTEM" \
+                  --argstr username "$USERNAME" \
+                  --argstr homeDir "$HOME_DIR"
+                echo "[apply] activating..."
+                ./result/activate
+                echo "[apply] done."
+              '';
+            } + "/bin/apply";
+        };
 
-                  apps.aarch64-darwin.apply = let
-                    pkgs = pkgsFor "aarch64-darwin";
-                  in {
-                    type = "app";
-                    program = pkgs.writeShellApplication {
-                      name = "apply";
-                      runtimeInputs = [ pkgs.coreutils pkgs.nix ];
-                      text = ''
-                        set -euo pipefail
-                        usage() {
-                          echo "Usage: nix run .#apply -- --username <name> --home <dir> [--system <triple>]"
-                          echo "  Example (macOS): nix run .#apply -- --username ${USER} --home ${HOME} --system ${pkgs.stdenv.hostPlatform.system}"
-                        }
-                        USERNAME=""
-                        HOME_DIR=""
-                        DEFAULT_SYSTEM="${pkgs.stdenv.hostPlatform.system}"
-                        SYSTEM="$DEFAULT_SYSTEM"
-                        while [ $# -gt 0 ]; do
-                          case "$1" in
-                            --username) USERNAME="$2"; shift 2;;
-                            --home)     HOME_DIR="$2"; shift 2;;
-                            --system)   SYSTEM="$2";   shift 2;;
-                            -h|--help)  usage; exit 0;;
-                            *) echo "Unknown arg: $1"; usage; exit 2;;
-                          esac
-                        done
-                        if [ -z "$USERNAME" ] || [ -z "$HOME_DIR" ]; then
-                          echo "Error: --username and --home are required."; usage; exit 2
-                        fi
-                        echo "[apply] system=$SYSTEM user=$USERNAME home=$HOME_DIR"
-                        nix build .#homeConfigurationsDynamic \
-                          --argstr system "$SYSTEM" \
-                          --argstr username "$USERNAME" \
-                          --argstr homeDir "$HOME_DIR"
-                        echo "[apply] activating..."
-                        ./result/activate
-                        echo "[apply] done."
-                      '';
-                    } + "/bin/apply";
-                  };
+      apps.aarch64-darwin.apply =
+        let
+          pkgs = pkgsFor "aarch64-darwin";
+        in
+        {
+          type = "app";
+          program = pkgs.writeShellApplication
+            {
+              name = "apply";
+              runtimeInputs = [ pkgs.coreutils pkgs.nix ];
+              text = ''
+                set -euo pipefail
+                usage() {
+                  echo "Usage: nix run .#apply -- --username <name> --home <dir> [--system <triple>]"
+                  echo "  Example (macOS): nix run .#apply -- --username ${USER} --home ${HOME} --system ${pkgs.stdenv.hostPlatform.system}"
+                }
+                USERNAME=""
+                HOME_DIR=""
+                DEFAULT_SYSTEM="${pkgs.stdenv.hostPlatform.system}"
+                SYSTEM="$DEFAULT_SYSTEM"
+                while [ $# -gt 0 ]; do
+                  case "$1" in
+                    --username) USERNAME="$2"; shift 2;;
+                    --home)     HOME_DIR="$2"; shift 2;;
+                    --system)   SYSTEM="$2";   shift 2;;
+                    -h|--help)  usage; exit 0;;
+                    *) echo "Unknown arg: $1"; usage; exit 2;;
+                  esac
+                done
+                if [ -z "$USERNAME" ] || [ -z "$HOME_DIR" ]; then
+                  echo "Error: --username and --home are required."; usage; exit 2
+                fi
+                echo "[apply] system=$SYSTEM user=$USERNAME home=$HOME_DIR"
+                nix build .#homeConfigurationsDynamic \
+                  --argstr system "$SYSTEM" \
+                  --argstr username "$USERNAME" \
+                  --argstr homeDir "$HOME_DIR"
+                echo "[apply] activating..."
+                ./result/activate
+                echo "[apply] done."
+              '';
+            } + "/bin/apply";
+        };
 
-                  # (Optional) later you can add darwinConfigurations / nixosConfigurations here
-                  # using `darwin.lib.darwinSystem` or `nixpkgs.lib.nixosSystem`.  see docs.
-                };
-              }
+      # (Optional) later you can add darwinConfigurations / nixosConfigurations here
+      # using `darwin.lib.darwinSystem` or `nixpkgs.lib.nixosSystem`.  see docs.
+    };
+}
