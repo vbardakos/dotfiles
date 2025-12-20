@@ -58,7 +58,6 @@
                 set -euo pipefail
                 usage() {
                   echo "Usage: nix run .#apply -- --username <name> --home <dir> [--system <triple>]"
-                  # echo "  Example (Linux): nix run .#apply -- --username ${USER} --home ${HOME} --system ${pkgs.stdenv.hostPlatform.system}"
                 }
                 USERNAME=""
                 HOME_DIR=""
@@ -102,7 +101,7 @@
                 set -euo pipefail
                 usage() {
                   echo "Usage: nix run .#apply -- --username <name> --home <dir> [--system <triple>]"
-                  echo "  Example (macOS): nix run .#apply -- --username ${USER} --home ${HOME} --system ${pkgs.stdenv.hostPlatform.system}"
+                  # echo "  Example (macOS): nix run .#apply -- --username ${USER} --home ${HOME} --system ${pkgs.stdenv.hostPlatform.system}"
                 }
                 USERNAME=""
                 HOME_DIR=""
