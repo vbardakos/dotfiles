@@ -12,7 +12,7 @@
   outputs = { self, nixpkgs, home-manager }:
     let
       # Values you should modify
-      username = "vbar"; # $USER
+      username = "vasilisbardakos"; # $USER
 
       # system = "aarch64-darwin";  # x86_64-linux, aarch64-multiplatform, etc.
       system = builtins.currentSystem;
