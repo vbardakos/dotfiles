@@ -1,0 +1,108 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "var": {
+    "Hello":  "hello"
+  },
+  "upgrade": {
+    "source": "cdn",
+    "interval": "168h",
+    "auto": false,
+    "notice": false
+  },
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "os",
+
+          "style": "plain",
+          "foreground": "#45F1C2",
+          "template": "{{ if .Segments.Python.Venv }} {{ else }}{{ .Icon }} {{ end }}"
+        },
+        {
+          "template": "{{ .UserName }} on",
+          "foreground": "#45F1C2",
+          "type": "session",
+          "style": "plain"
+        },
+        {
+          "template": " {{ .Path }} ",
+          "foreground": "#0CA0D8",
+          "type": "path",
+          "style": "plain",
+          "options": {
+            "folder_separator_icon": "/",
+            "style": "full",
+            "mapped_locations": {
+              "~/*": "\uf07b ",
+              "~/dev/work": "\udb82\ude2a",
+              "~/.config": "\ue5fc cfg",
+              "~/dev/self": "\udb85\udf46 "
+            }
+          }
+        },
+        {
+          "options": {
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "template": "in {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }}{{ if .BranchStatus }}{{ .BranchStatus }}{{ end }} ",
+          "foreground": "#14A5AE",
+          "type": "git",
+          "style": "plain"
+        },
+        {
+          "type": "python",
+          "style": "plain",
+          "foreground": "#FF8300",
+          "template": " "
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#6f6f70",
+          "template": "{{ if .Env.TMUX }}via \uf489 {{ .Env.TMUX_SESSION }} {{ end }}"
+
+        },
+        {
+          "type": "project",
+          "style": "plain",
+          "template": "{{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}( {{ .Version }}){{ end }}{{ end }} "
+        },
+        {
+          "type": "executiontime",
+          "style": "plain",
+          "foreground": "#ff892e",
+          "template": "<#6f6f70>elapsed</> {{ .FormattedMs }} ",
+          "options": {
+            "threshold": 1000,
+            "style": "round",
+            "always_enabled": false
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "template": "\ue3bf ",
+          "foreground": "#cd5e42",
+          "type": "root",
+          "style": "plain"
+        },
+        {
+          "template": "# ",
+          "foreground": "#CD4277",
+          "type": "text",
+          "style": "plain"
+        }
+      ],
+      "newline": true
+    }
+  ],
+  "version": 4
+}
