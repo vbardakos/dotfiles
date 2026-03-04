@@ -1,0 +1,41 @@
+font-family = Monaspace Neon Frozen
+theme = Horizon
+# theme = Rose Pine Moon
+# theme = Gruvbox Dark Hard
+
+background-image=~/Downloads/froggie.png
+background-image-opacity=0.3
+background-image-position=bottom-right
+background-image-fit=none
+
+font-size = 22
+font-thicken = true
+
+# hidden
+macos-titlebar-style = hidden
+macos-non-native-fullscreen = true
+macos-option-as-alt=true
+maximize = true
+window-save-state = always
+
+shell-integration = fish
+mouse-hide-while-typing = true
+scrollback-limit = 1000000
+working-directory = inherit
+window-inherit-working-directory = true
+
+keybind = performable:ctrl+h=goto_split:left
+keybind = performable:ctrl+j=goto_split:bottom
+keybind = performable:ctrl+k=goto_split:top
+keybind = performable:ctrl+l=goto_split:right
+
+# keybind = ctrl+a>h=new_split:left
+# keybind = ctrl+a>j=new_split:down
+# keybind = ctrl+a>k=new_split:up
+# keybind = ctrl+a>l=new_split:right
+# keybind = ctrl+a>f=toggle_split_zoom
+#
+# keybind = ctrl+a>n=next_tab
+# keybind = ctrl+a>p=previous_tab
+
+keybind = ctrl+.=reload_config
