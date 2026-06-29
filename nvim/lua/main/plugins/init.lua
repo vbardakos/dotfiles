@@ -405,7 +405,13 @@ vim.g.rustaceanvim = {
     default_settings = {
       ["rust-analyzer"] = {
         cargo = { allFeatures = true },
-        checkOnSave = { command = "clippy" },
+        -- checkOnSave is a boolean in current rust-analyzer; the command/args
+        -- moved into a separate `check` table.
+        checkOnSave = true,
+        check = {
+          command = "clippy",
+          extraArgs = { "--no-deps" },
+        },
         procMacro = { enable = true },
       },
     },
