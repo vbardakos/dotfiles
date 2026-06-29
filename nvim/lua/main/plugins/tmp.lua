@@ -41,4 +41,4 @@ local function get_clients()
   end
 end
 
-get_clients()
+-- get_clients()  -- debug only; do not call at module load

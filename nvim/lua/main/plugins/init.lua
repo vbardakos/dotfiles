@@ -57,10 +57,8 @@ local set_diagnostics_hl = function(name, ref)
   end
   -- virtual text :: enabled @ diags
   vim.api.nvim_set_hl(0, "DiagnosticVirtualText" .. name, { fg = refc.fg, italic = true, blend = 100 })
-  -- errline sign :: enabled @ diags
+  -- floating window text
   vim.api.nvim_set_hl(0, "DiagnosticFloating" .. name, { fg = refc.fg, italic = true, blend = 100 })
-  -- menus
-  vim.api.nvim_set_hl(0, "DiagnosticVirtualFloating" .. name, { fg = refc.fg, blend = 100 })
 end
 
 set_diagnostics_hl("Ok", "Normal")
@@ -232,11 +230,11 @@ lsp.set_extra_keymaps(lsp_callback)
 lsp.add_capabilities(cmp.capabilities())
 lsp.setup()
 
-vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
-  callback = function()
-    vim.lsp.codelens.refresh()
-  end,
-})
+-- vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "InsertLeave" }, {
+--   callback = function()
+--     vim.lsp.codelens.enable()
+--   end,
+-- })
 
 -------------------------------
 --------- DIAGNOSTICS ---------
@@ -265,14 +263,7 @@ end, { desc = "toggle buffer diagnostic" })
 ---------- FORMATING ----------
 -------------------------------
 
-vim.keymap.set({ "n", "v" }, "<leader>f", vim.lsp.buf.format)
-
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*",
-  callback = function(_)
-    vim.lsp.buf.format {}
-  end,
-})
+require "main.plugins.conform"
 
 -------------------------------
 --------- NAVIGATION ----------
@@ -481,11 +472,20 @@ comments.setup {
   -- stylua: ignore end
 }
 
-local ok, pairs = pcall(require, "mini.pairs")
+local ok, mini_pairs = pcall(require, "mini.pairs")
 
 if not ok then
   vim.pack.add { "https://github.com/nvim-mini/mini.pairs" }
-  pairs = require "mini.pairs"
+  mini_pairs = require "mini.pairs"
 end
 
-pairs.setup {}
+mini_pairs.setup {}
+
+vim.pack.add {
+  "https://github.com/selimacerbas/live-server.nvim",
+  "https://github.com/selimacerbas/markdown-preview.nvim",
+}
+
+vim.keymap.set("n", "<leader>mps", "<cmd>MarkdownPreview<cr>", { desc = "Markdown: Start preview" })
+vim.keymap.set("n", "<leader>mpS", "<cmd>MarkdownPreviewStop<cr>", { desc = "Markdown: Stop preview" })
+vim.keymap.set("n", "<leader>mpr", "<cmd>MarkdownPreviewRefresh<cr>", { desc = "Markdown: Refresh preview" })

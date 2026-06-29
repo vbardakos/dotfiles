@@ -47,20 +47,12 @@ function M.setup_todo_comments()
 end
 
 function M.setup_mini_pairs()
-  local ok
-  -- ok, _ = pcall(require, "treesitter-textobjects")
-  -- if not ok then
-  --   vim.pack.add { { src = "https://github.com/nvim-treesitter/nvim-treesitter-textobjects", version = "main" } }
-  -- end
-
-  ok, pairs = pcall(require, "mini.pairs")
+  local ok, mini_pairs = pcall(require, "mini.pairs")
   if not ok then
     vim.pack.add { "https://github.com/nvim-mini/mini.pairs" }
-    pairs = require "mini.pairs"
+    mini_pairs = require "mini.pairs"
   end
-  -- ok, surround = pcall(require, "mini.surround")
-  -- if not ok then
-  --   vim.pack.add { "https://github.com/
+  mini_pairs.setup {}
 end
 
 return M

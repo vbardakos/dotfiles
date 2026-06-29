@@ -41,7 +41,6 @@ function M.setup(cmp)
   }
 
   local snippet_expand = function(args)
-    vim.snippet.expand(args.body)
     require("luasnip").lsp_expand(args.body)
 
     if M.mini then
@@ -89,13 +88,6 @@ function M.setup(cmp)
 			end
 			end, { "i", "s" }),
 			--]]
-    },
-    sources = {
-      { name = "nvim_lsp" },
-      { name = "luasnip" },
-      { name = "buffer" },
-      { name = "path" },
-      { name = "emoji" },
     },
     sources = cmp.config.sources({
       { name = "nvim_lsp" },

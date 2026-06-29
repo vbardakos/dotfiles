@@ -86,7 +86,7 @@ vim.api.nvim_create_user_command("RootStatement", function()
   local srow, scol, frow, fcol = node:range(false)
   -- print(srow, scol, frow, fcol)
   vim.api.nvim_win_set_cursor(win, { srow + 1, scol })
-  vim.cmd "normal v"
+  vim.cmd "normal! v"
   vim.api.nvim_win_set_cursor(win, { frow + 1, fcol })
 
   -- local content = {}

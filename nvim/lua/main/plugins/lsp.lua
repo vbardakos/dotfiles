@@ -169,7 +169,7 @@ M.servers = {
 M.capabilities = vim.lsp.protocol.make_client_capabilities()
 function M.add_capabilities(caps)
   if caps ~= nil then
-    vim.tbl_deep_extend("force", M.capabilities, caps)
+    M.capabilities = vim.tbl_deep_extend("force", M.capabilities, caps)
   end
 end
 
@@ -194,9 +194,9 @@ function M.native_keymaps(buf)
   map("<leader>k", vim.lsp.buf.signature_help, "Hover Documentation")
   map("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
 
-  map("<leader>cl", function()
-    vim.lsp.codelens.refresh { bufnr = 0 }
-  end, "[C]ode[L]ens refresh")
+  -- map("<leader>cl", function()
+  --   vim.lsp.codelens.enable(true, { bufnr = 0 })
+  -- end, "[C]ode[L]ens refresh")
   map("<leader>th", function()
     vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
   end, "[T]oggle inlay [H]int")
@@ -206,10 +206,8 @@ function M.native_keymaps(buf)
 end
 
 function M.attach()
-  vim.lsp.protocol.make_client_capabilities()
   vim.api.nvim_create_autocmd("LspAttach", {
-    -- group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),  -- original
-    group = vim.api.nvim_create_augroup("lsp-attach", {}),
+    group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
     callback = function(event)
       M.native_keymaps(event.buf)
 
@@ -217,6 +215,7 @@ function M.attach()
         fn(event.buf)
       end
 
+      vim.lsp.codelens.enable(true, { bufnr = event.buf })
       local client = vim.lsp.get_client_by_id(event.data.client_id)
       if client and client.server_capabilities.documentHighlightProvider then
         vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
@@ -256,7 +255,7 @@ function M.setup()
     vim.lsp.config[name] = cfg
   end
 
-  vim.lsp.enable(ensure_installed)
+  vim.lsp.enable(vim.tbl_keys(M.servers))
 end
 
 return M
