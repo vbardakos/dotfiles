@@ -35,10 +35,27 @@ function M.setup(cmp)
 
     "https://github.com/L3MON4D3/LuaSnip",
     "https://github.com/saadparwaiz1/cmp_luasnip",
+    "https://github.com/rafamadriz/friendly-snippets",
 
     "https://github.com/onsails/lspkind.nvim",
     "https://github.com/kristijanhusak/vim-dadbod-completion", -- SQL
   }
+
+  -- Load the VSCode-format snippet corpus from friendly-snippets into LuaSnip.
+  -- `lazy_load` means snippets are read per-filetype on demand, not at startup.
+  require("luasnip.loaders.from_vscode").lazy_load()
+
+  local luasnip = require "luasnip"
+  vim.keymap.set({ "i", "s" }, "<C-l>", function()
+    if luasnip.expand_or_locally_jumpable() then
+      luasnip.expand_or_jump()
+    end
+  end, { desc = "Snippet: expand / jump next placeholder" })
+  vim.keymap.set({ "i", "s" }, "<C-h>", function()
+    if luasnip.locally_jumpable(-1) then
+      luasnip.jump(-1)
+    end
+  end, { desc = "Snippet: jump prev placeholder" })
 
   local snippet_expand = function(args)
     require("luasnip").lsp_expand(args.body)

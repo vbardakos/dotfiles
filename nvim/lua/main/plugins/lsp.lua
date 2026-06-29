@@ -189,7 +189,9 @@ function M.native_keymaps(buf)
 
   map("<leader>wa", vim.lsp.buf.add_workspace_folder, "[W]orkspace [A]dd")
   map("<leader>wr", vim.lsp.buf.add_workspace_folder, "[W]orkspace [R]emove")
-  map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+  vim.keymap.set("n", "<leader>rn", function()
+    return ":IncRename " .. vim.fn.expand "<cword>"
+  end, { buffer = buf, expr = true, desc = "LSP: [R]e[n]ame (live preview)" })
   map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "v" })
   map("K", vim.lsp.buf.hover, "Hover Documentation")
   map("<leader>k", vim.lsp.buf.signature_help, "Hover Documentation")

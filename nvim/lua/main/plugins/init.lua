@@ -108,7 +108,7 @@ local lsp_callback = function(buf)
   map("gd", builtin.lsp_definitions, "[G]oto [D]efinition")
   map("gr", builtin.lsp_references, "[G]oto [R]eferences")
   map("gI", builtin.lsp_implementations, "[G]oto [I]mplementation")
-  map("<leader>D", builtin.lsp_type_definitions, "Type [D]efinition")
+  map("<leader>ct", builtin.lsp_type_definitions, "[C]ode: [T]ype Definition")
   map("<leader>ds", builtin.lsp_document_symbols, "[D]ocument [S]ymbols")
   map("<leader>ws", builtin.lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
 end
@@ -224,6 +224,9 @@ cmp.setup(require "cmp")
 -------------------------------
 ------------- LSP -------------
 -------------------------------
+
+vim.pack.add { "https://github.com/smjonas/inc-rename.nvim" }
+require("inc_rename").setup {}
 
 vim.pack.add { "https://github.com/folke/lazydev.nvim" }
 require("lazydev").setup {
@@ -749,11 +752,67 @@ for i = 1, 5 do
   end, { desc = "[H]arpoon slot " .. i })
 end
 
+vim.pack.add {
+  "https://github.com/tpope/vim-dadbod",
+  "https://github.com/kristijanhusak/vim-dadbod-ui",
+}
+
+vim.g.db_ui_use_nerd_fonts = 1
+vim.g.db_ui_show_database_icon = 1
+vim.g.db_ui_win_position = "left"
+vim.g.db_ui_winwidth = 40
+-- per-cwd notebook so SQL drafts live with the project
+vim.g.db_ui_save_location = vim.fn.stdpath "data" .. "/db_ui"
+vim.g.db_ui_use_nvim_notify = 0
+vim.g.db_ui_auto_execute_table_helpers = 1
+
+vim.api.nvim_create_autocmd("FileType", {
+  desc = "cmp: dadbod completion source in SQL/MySQL/PLSQL buffers",
+  group = vim.api.nvim_create_augroup("DadbodCmp", { clear = true }),
+  pattern = { "sql", "mysql", "plsql" },
+  callback = function()
+    require("cmp").setup.buffer { sources = { { name = "vim-dadbod-completion" }, { name = "buffer" } } }
+  end,
+})
+
+vim.keymap.set("n", "<leader>Du", "<cmd>DBUIToggle<cr>", { desc = "DB: toggle DBUI sidebar" })
+vim.keymap.set("n", "<leader>Da", "<cmd>DBUIAddConnection<cr>", { desc = "DB: [A]dd connection" })
+vim.keymap.set("n", "<leader>Df", "<cmd>DBUIFindBuffer<cr>", { desc = "DB: [F]ind current buffer" })
+vim.keymap.set("n", "<leader>Dr", "<cmd>DBUIRenameBuffer<cr>", { desc = "DB: [R]ename SQL buffer" })
+
+vim.pack.add { "https://github.com/danymat/neogen" }
+local neogen = require "neogen"
+neogen.setup {
+  enabled = true,
+  snippet_engine = "luasnip",
+  languages = {
+    python = { template = { annotation_convention = "google_docstrings" } },
+    rust = { template = { annotation_convention = "rustdoc" } },
+    lua = { template = { annotation_convention = "ldoc" } },
+  },
+}
+
+vim.keymap.set("n", "<leader>nf", function()
+  neogen.generate { type = "func" }
+end, { desc = "Neogen: [F]unction docstring" })
+vim.keymap.set("n", "<leader>nc", function()
+  neogen.generate { type = "class" }
+end, { desc = "Neogen: [C]lass docstring" })
+vim.keymap.set("n", "<leader>nt", function()
+  neogen.generate { type = "type" }
+end, { desc = "Neogen: [T]ype docstring" })
+vim.keymap.set("n", "<leader>nF", function()
+  neogen.generate { type = "file" }
+end, { desc = "Neogen: [F]ile-level docstring" })
+
 vim.pack.add { "https://github.com/folke/which-key.nvim" }
 
 local wk = require "which-key"
 wk.add {
   { "<leader>a", group = "[A]I (claudecode)" },
+  { "<leader>b", group = "[B]uffer" },
+  { "<leader>bd", desc = "delete buffer (keep window)" },
+  { "<leader>bD", desc = "force-delete buffer" },
   { "<leader>ac", desc = "toggle Claude Code terminal" },
   { "<leader>af", desc = "focus Claude Code" },
   { "<leader>as", desc = "send selection to Claude Code", mode = "v" },
@@ -761,6 +820,11 @@ wk.add {
   { "<leader>ad", desc = "deny proposed diff" },
   { "<leader>c", group = "[C]ode" },
   { "<Tab>", group = "[H]arpoon" },
+  { "<leader>n", group = "[N]eogen (docstrings)" },
+  { "<leader>nf", desc = "function docstring" },
+  { "<leader>nc", desc = "class docstring" },
+  { "<leader>nt", desc = "type docstring" },
+  { "<leader>nF", desc = "file docstring" },
   { "<leader>l", group = "[L]LM (codecompanion)" },
   { "<leader>la", desc = "actions menu", mode = { "n", "v" } },
   { "<leader>lc", desc = "toggle chat", mode = { "n", "v" } },
@@ -775,7 +839,12 @@ wk.add {
   { "sF", desc = "find surrounding (left)" },
   { "sh", desc = "highlight surrounding" },
   { "sn", desc = "update n_lines" },
-  { "<leader>d", group = "[D]ebug" }, -- also holds <leader>ds (doc symbols), <leader>D (type def)
+  { "<leader>D", group = "[D]atabase (dadbod)" },
+  { "<leader>Du", desc = "toggle DBUI sidebar" },
+  { "<leader>Da", desc = "add connection" },
+  { "<leader>Df", desc = "find current buffer" },
+  { "<leader>Dr", desc = "rename SQL buffer" },
+  { "<leader>d", group = "[D]ebug" }, -- also holds <leader>ds (doc symbols)
   { "<leader>db", desc = "toggle breakpoint" },
   { "<leader>dB", desc = "conditional breakpoint" },
   { "<leader>dl", desc = "log point" },
@@ -866,6 +935,16 @@ if not ok then
 end
 
 mini_pairs.setup {}
+
+local mini_bufremove = require "mini.bufremove"
+mini_bufremove.setup {}
+
+vim.keymap.set("n", "<leader>bd", function()
+  mini_bufremove.delete(0, false)
+end, { desc = "[B]uffer [D]elete (keep window)" })
+vim.keymap.set("n", "<leader>bD", function()
+  mini_bufremove.delete(0, true)
+end, { desc = "[B]uffer force-[D]elete" })
 
 -- mini.surround + mini.ai: ship inside mini.nvim (already in the pack list)
 local mini_ai = require "mini.ai"
