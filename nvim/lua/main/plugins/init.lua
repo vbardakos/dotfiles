@@ -225,6 +225,14 @@ cmp.setup(require "cmp")
 ------------- LSP -------------
 -------------------------------
 
+vim.pack.add { "https://github.com/folke/lazydev.nvim" }
+require("lazydev").setup {
+  library = {
+    -- Load luv types when `vim.uv` is referenced
+    { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+  },
+}
+
 local lsp = require "main.plugins.lsp"
 lsp.set_extra_keymaps(lsp_callback)
 lsp.add_capabilities(cmp.capabilities())
@@ -264,6 +272,223 @@ end, { desc = "toggle buffer diagnostic" })
 -------------------------------
 
 require "main.plugins.conform"
+
+-------------------------------
+------------ DEBUG -----------
+-------------------------------
+
+vim.pack.add {
+  "https://github.com/mfussenegger/nvim-dap",
+  "https://github.com/rcarriga/nvim-dap-ui",
+  "https://github.com/theHamsta/nvim-dap-virtual-text",
+  "https://github.com/nvim-neotest/nvim-nio", -- dap-ui dep
+  "https://github.com/mfussenegger/nvim-dap-python",
+}
+
+local dap = require "dap"
+local dapui = require "dapui"
+dapui.setup()
+require("nvim-dap-virtual-text").setup {}
+
+-- auto open/close dap-ui on debug session lifecycle
+dap.listeners.before.attach.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+  dapui.close()
+end
+
+-- Rust / C / C++ adapter via codelldb (installed by mason)
+dap.adapters.codelldb = {
+  type = "server",
+  port = "${port}",
+  executable = {
+    command = vim.fn.exepath "codelldb",
+    args = { "--port", "${port}" },
+  },
+}
+
+dap.configurations.rust = {
+  {
+    name = "Launch",
+    type = "codelldb",
+    request = "launch",
+    program = function()
+      return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+    end,
+    cwd = "${workspaceFolder}",
+    stopOnEntry = false,
+    args = {},
+  },
+}
+
+-- Python: prefer debugpy from a discoverable virtualenv, else fall back to system python
+local function debugpy_python()
+  local cwd = vim.fn.getcwd()
+  for _, p in ipairs { cwd .. "/.venv/bin/python", cwd .. "/venv/bin/python" } do
+    if vim.fn.executable(p) == 1 then
+      return p
+    end
+  end
+  return "python3"
+end
+require("dap-python").setup(debugpy_python())
+
+local dap_breakpoint_condition = function()
+  vim.ui.input({ prompt = "Breakpoint condition: " }, function(cond)
+    if cond and cond ~= "" then
+      dap.set_breakpoint(cond)
+    end
+  end)
+end
+
+local dap_log_point = function()
+  vim.ui.input({ prompt = "Log point message: " }, function(msg)
+    if msg and msg ~= "" then
+      dap.set_breakpoint(nil, nil, msg)
+    end
+  end)
+end
+
+vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, { desc = "DAP: toggle [B]reakpoint" })
+vim.keymap.set("n", "<leader>dB", dap_breakpoint_condition, { desc = "DAP: conditional [B]reakpoint" })
+vim.keymap.set("n", "<leader>dl", dap_log_point, { desc = "DAP: [L]og point" })
+vim.keymap.set("n", "<leader>dC", function()
+  dap.clear_breakpoints()
+end, { desc = "DAP: [C]lear all breakpoints" })
+vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "DAP: [C]ontinue / start" })
+vim.keymap.set("n", "<F5>", dap.continue, { desc = "DAP: continue / start" })
+vim.keymap.set("n", "<leader>dx", dap.terminate, { desc = "DAP: terminate" })
+vim.keymap.set("n", "<leader>dr", dap.run_last, { desc = "DAP: [R]un last" })
+vim.keymap.set("n", "<leader>dR", dap.repl.open, { desc = "DAP: open [R]EPL" })
+vim.keymap.set("n", "<leader>do", dap.step_over, { desc = "DAP: step [O]ver" })
+vim.keymap.set("n", "<leader>di", dap.step_into, { desc = "DAP: step [I]nto" })
+vim.keymap.set("n", "<leader>dO", dap.step_out, { desc = "DAP: step [O]ut" })
+vim.keymap.set("n", "<leader>dh", function()
+  require("dap.ui.widgets").hover()
+end, { desc = "DAP: [H]over value" })
+vim.keymap.set({ "n", "v" }, "<leader>de", function()
+  require("dapui").eval()
+end, { desc = "DAP: [E]val under cursor / selection" })
+vim.keymap.set("n", "<leader>du", function()
+  dapui.toggle {}
+end, { desc = "DAP: toggle [U]I" })
+
+-- python-specific
+vim.keymap.set("n", "<leader>dn", function()
+  require("dap-python").test_method()
+end, { desc = "DAP: debug [N]earest test (python)" })
+vim.keymap.set("n", "<leader>df", function()
+  require("dap-python").test_class()
+end, { desc = "DAP: debug test class/[F]ile (python)" })
+vim.keymap.set("v", "<leader>dv", function()
+  require("dap-python").debug_selection()
+end, { desc = "DAP: debug [V]isual selection (python)" })
+
+-------------------------------
+------------- RUST ------------
+-------------------------------
+
+vim.pack.add { "https://github.com/mrcjkb/rustaceanvim" }
+vim.g.rustaceanvim = {
+  server = {
+    capabilities = require("main.plugins.lsp").capabilities,
+    default_settings = {
+      ["rust-analyzer"] = {
+        cargo = { allFeatures = true },
+        checkOnSave = { command = "clippy" },
+        procMacro = { enable = true },
+      },
+    },
+  },
+  -- DAP picks up the codelldb adapter we set above in the DEBUG section.
+}
+
+vim.api.nvim_create_autocmd("FileType", {
+  desc = "rustaceanvim keymaps in .rs",
+  group = vim.api.nvim_create_augroup("RustaceanKeymaps", { clear = true }),
+  pattern = "rust",
+  callback = function(ev)
+    local map = function(key, cmd, desc)
+      vim.keymap.set("n", key, cmd, { buffer = ev.buf, desc = "Rust: " .. desc })
+    end
+    map("<leader>cr", "<cmd>RustLsp runnables<cr>", "[R]unnables picker")
+    map("<leader>cb", "<cmd>RustLsp debuggables<cr>", "de[B]uggables picker")
+    map("<leader>ce", "<cmd>RustLsp expandMacro<cr>", "[E]xpand macro")
+    map("<leader>cp", "<cmd>RustLsp parentModule<cr>", "[P]arent module")
+    map("<leader>cx", "<cmd>RustLsp explainError<cr>", "e[X]plain error")
+  end,
+})
+
+-------------------------------
+----------- TESTING -----------
+-------------------------------
+
+vim.pack.add {
+  "https://github.com/nvim-neotest/neotest",
+  "https://github.com/nvim-neotest/neotest-python",
+  "https://github.com/rouge8/neotest-rust",
+}
+
+local neotest = require "neotest"
+neotest.setup {
+  adapters = {
+    require "neotest-python" {
+      dap = { justMyCode = false },
+      runner = "pytest",
+    },
+    require "neotest-rust" {
+      args = { "--no-capture" },
+      dap_adapter = "codelldb",
+    },
+  },
+  quickfix = { enabled = false },
+  status = { virtual_text = true },
+  output = { open_on_run = false },
+}
+
+vim.keymap.set("n", "<leader>tt", function()
+  neotest.run.run()
+end, { desc = "Test: run nearest" })
+vim.keymap.set("n", "<leader>tf", function()
+  neotest.run.run(vim.fn.expand "%")
+end, { desc = "Test: run [F]ile" })
+vim.keymap.set("n", "<leader>tT", function()
+  neotest.run.run(vim.loop.cwd())
+end, { desc = "Test: run all in cwd" })
+vim.keymap.set("n", "<leader>tl", function()
+  neotest.run.run_last()
+end, { desc = "Test: run [L]ast" })
+vim.keymap.set("n", "<leader>tD", function()
+  neotest.run.run { strategy = "dap" }
+end, { desc = "Test: [D]ebug nearest" })
+vim.keymap.set("n", "<leader>tW", function()
+  neotest.watch.toggle(vim.fn.expand "%")
+end, { desc = "Test: toggle [W]atch file" })
+vim.keymap.set("n", "<leader>ts", function()
+  neotest.summary.toggle()
+end, { desc = "Test: toggle [S]ummary" })
+vim.keymap.set("n", "<leader>to", function()
+  neotest.output.open { enter = true, auto_close = true }
+end, { desc = "Test: show [O]utput float" })
+vim.keymap.set("n", "<leader>tO", function()
+  neotest.output_panel.toggle()
+end, { desc = "Test: toggle [O]utput panel" })
+vim.keymap.set("n", "<leader>tS", function()
+  neotest.run.stop()
+end, { desc = "Test: [S]top" })
+vim.keymap.set("n", "<leader>tn", function()
+  neotest.jump.next { status = "failed" }
+end, { desc = "Test: jump [N]ext failed" })
+vim.keymap.set("n", "<leader>tp", function()
+  neotest.jump.prev { status = "failed" }
+end, { desc = "Test: jump [P]rev failed" })
 
 -------------------------------
 --------- NAVIGATION ----------
@@ -416,18 +641,179 @@ require("gitsigns").setup {
 
 vim.pack.add {
   "https://github.com/tpope/vim-sleuth",
+  "https://github.com/kevinhwang91/nvim-bqf",
   -- "https://github.com/lukas-reineke/indent-blankline.nvim", -- require "ibl".setup()
 }
+
+require("bqf").setup {
+  preview = { auto_preview = true, win_height = 12, win_vheight = 12 },
+  func_map = { vsplit = "v", ptogglemode = "z,", stoggleup = "" },
+}
+
+vim.pack.add { "https://github.com/saecki/crates.nvim" }
+require("crates").setup {
+  -- LSP mode: completion/hover/code-actions are served through the standard
+  -- LSP machinery, so they ride your existing nvim_lsp cmp source and `K`/`<leader>ca`.
+  lsp = { enabled = true, actions = true, completion = true, hover = true },
+}
+
+vim.api.nvim_create_autocmd("BufRead", {
+  desc = "crates.nvim keymaps in Cargo.toml",
+  group = vim.api.nvim_create_augroup("CratesKeymaps", { clear = true }),
+  pattern = "Cargo.toml",
+  callback = function(ev)
+    local crates = require "crates"
+    local map = function(key, fn, desc)
+      vim.keymap.set("n", key, fn, { buffer = ev.buf, desc = "Crates: " .. desc })
+    end
+    map("<leader>cv", crates.show_versions_popup, "[V]ersions popup")
+    map("<leader>cf", crates.show_features_popup, "[F]eatures popup")
+    map("<leader>cd", crates.show_dependencies_popup, "[D]ependencies popup")
+    map("<leader>cu", crates.update_all_crates, "[U]pdate all (semver)")
+    map("<leader>cU", crates.upgrade_all_crates, "[U]pgrade all (across majors)")
+    map("<leader>co", crates.open_homepage, "[O]pen homepage")
+    map("<leader>cR", crates.open_crates_io, "open crates.io")
+    map("<leader>cD", crates.open_documentation, "open docs.rs")
+  end,
+})
+
+vim.pack.add { "https://github.com/folke/flash.nvim" }
+require("flash").setup {
+  modes = {
+    char = { enabled = true }, -- label-augments f/F/t/T (multi-line targets)
+    search = { enabled = true }, -- label-augments `/` and `?` (jump-to-match)
+  },
+}
+
+-- s/S/treesitter are intentionally unbound: mini.surround owns `s`.
+-- Remote-operator works in operator-pending mode only, so it doesn't
+-- shadow normal-mode `r` (replace single char).
+vim.keymap.set("o", "r", function()
+  require("flash").remote()
+end, { desc = "Flash: remote target (e.g. yr<jump>)" })
+
+vim.pack.add { "https://github.com/MagicDuck/grug-far.nvim" }
+local grug_far = require "grug-far"
+grug_far.setup {
+  headerMaxWidth = 80,
+}
+
+vim.keymap.set("n", "<leader>sx", function()
+  grug_far.open()
+end, { desc = "[S]earch & replace (grug-far)" })
+vim.keymap.set("v", "<leader>sx", function()
+  grug_far.with_visual_selection()
+end, { desc = "[S]earch & replace within selection" })
+
+vim.pack.add { "https://github.com/folke/persistence.nvim" }
+local persistence = require "persistence"
+persistence.setup {
+  options = vim.opt.sessionoptions:get(),
+}
+
+vim.keymap.set("n", "<leader>ps", function()
+  persistence.select()
+end, { desc = "Session: [S]elect" })
+vim.keymap.set("n", "<leader>pl", function()
+  persistence.load()
+end, { desc = "Session: [L]oad cwd session" })
+vim.keymap.set("n", "<leader>pr", function()
+  persistence.load { last = true }
+end, { desc = "Session: [R]estore last" })
+vim.keymap.set("n", "<leader>pn", function()
+  persistence.stop()
+end, { desc = "Session: do[N]'t save this exit" })
+
+vim.pack.add { { src = "https://github.com/ThePrimeagen/harpoon", version = "harpoon2" } }
+local harpoon = require "harpoon"
+harpoon:setup()
+
+vim.keymap.set("n", "<Tab>a", function()
+  harpoon:list():add()
+end, { desc = "[H]arpoon [A]dd file" })
+vim.keymap.set("n", "<Tab>m", function()
+  harpoon.ui:toggle_quick_menu(harpoon:list())
+end, { desc = "[H]arpoon toggle [M]enu" })
+vim.keymap.set("n", "<Tab>n", function()
+  harpoon:list():next()
+end, { desc = "[H]arpoon [N]ext" })
+vim.keymap.set("n", "<Tab>p", function()
+  harpoon:list():prev()
+end, { desc = "[H]arpoon [P]rev" })
+vim.keymap.set("n", "<Tab>c", function()
+  harpoon:list():clear()
+end, { desc = "[H]arpoon [C]lear list" })
+for i = 1, 5 do
+  vim.keymap.set("n", "<Tab>" .. i, function()
+    harpoon:list():select(i)
+  end, { desc = "[H]arpoon slot " .. i })
+end
 
 vim.pack.add { "https://github.com/folke/which-key.nvim" }
 
 local wk = require "which-key"
 wk.add {
+  { "<leader>a", group = "[A]I (claudecode)" },
+  { "<leader>ac", desc = "toggle Claude Code terminal" },
+  { "<leader>af", desc = "focus Claude Code" },
+  { "<leader>as", desc = "send selection to Claude Code", mode = "v" },
+  { "<leader>aa", desc = "accept proposed diff" },
+  { "<leader>ad", desc = "deny proposed diff" },
   { "<leader>c", group = "[C]ode" },
   { "<Tab>", group = "[H]arpoon" },
-  { "<leader>d", group = "[D]ocument" },
+  { "<leader>l", group = "[L]LM (codecompanion)" },
+  { "<leader>la", desc = "actions menu", mode = { "n", "v" } },
+  { "<leader>lc", desc = "toggle chat", mode = { "n", "v" } },
+  { "<leader>ld", desc = "add selection to chat", mode = "v" },
+  { "<leader>li", desc = "inline transform", mode = { "n", "v" } },
+  { "<leader>lp", desc = "prompt-then-inline", mode = { "n", "v" } },
+  { "s", group = "[S]urround", mode = { "n", "v" } },
+  { "sa", desc = "add surrounding", mode = { "n", "v" } },
+  { "sd", desc = "delete surrounding" },
+  { "sr", desc = "replace surrounding" },
+  { "sf", desc = "find surrounding (right)" },
+  { "sF", desc = "find surrounding (left)" },
+  { "sh", desc = "highlight surrounding" },
+  { "sn", desc = "update n_lines" },
+  { "<leader>d", group = "[D]ebug" }, -- also holds <leader>ds (doc symbols), <leader>D (type def)
+  { "<leader>db", desc = "toggle breakpoint" },
+  { "<leader>dB", desc = "conditional breakpoint" },
+  { "<leader>dl", desc = "log point" },
+  { "<leader>dC", desc = "clear all breakpoints" },
+  { "<leader>dc", desc = "continue / start" },
+  { "<leader>dx", desc = "terminate" },
+  { "<leader>dr", desc = "run last" },
+  { "<leader>dR", desc = "open REPL" },
+  { "<leader>do", desc = "step over" },
+  { "<leader>di", desc = "step into" },
+  { "<leader>dO", desc = "step out" },
+  { "<leader>dh", desc = "hover value" },
+  { "<leader>de", desc = "eval (n/v)" },
+  { "<leader>du", desc = "toggle dap-ui" },
+  { "<leader>dn", desc = "debug nearest test (py)" },
+  { "<leader>df", desc = "debug test file/class (py)" },
+  { "<leader>dv", desc = "debug visual selection (py)", mode = "v" },
+  { "<leader>p", group = "[P]ersistence" },
+  { "<leader>ps", desc = "select session" },
+  { "<leader>pl", desc = "load cwd session" },
+  { "<leader>pr", desc = "restore last session" },
+  { "<leader>pn", desc = "don't save this exit" },
   { "<leader>r", group = "[R]ename" },
   { "<leader>s", group = "[S]earch" },
+  { "<leader>sx", desc = "search & replace (grug-far)", mode = { "n", "v" } },
+  { "<leader>t", group = "[T]oggle / [T]est" }, -- shared: toggles (tb,tw,td,th,tc) + neotest
+  { "<leader>tt", desc = "run nearest test" },
+  { "<leader>tf", desc = "run test file" },
+  { "<leader>tT", desc = "run all tests (cwd)" },
+  { "<leader>tl", desc = "run last test" },
+  { "<leader>tD", desc = "debug nearest test" },
+  { "<leader>tW", desc = "toggle watch file" },
+  { "<leader>ts", desc = "toggle test summary" },
+  { "<leader>to", desc = "test output float" },
+  { "<leader>tO", desc = "toggle output panel" },
+  { "<leader>tS", desc = "stop running test" },
+  { "<leader>tn", desc = "next failed test" },
+  { "<leader>tp", desc = "prev failed test" },
   { "<leader>w", group = "[W]orkspace" },
 }
 
@@ -481,10 +867,113 @@ end
 
 mini_pairs.setup {}
 
+-- mini.surround + mini.ai: ship inside mini.nvim (already in the pack list)
+local mini_ai = require "mini.ai"
+mini_ai.setup {
+  custom_textobjects = {
+    -- function arg (a/i) — improved arg detection over default `a`
+    -- everything else uses mini.ai's built-in matchers for brackets, quotes, tags, etc.
+  },
+  n_lines = 500,
+}
+
+local mini_surround = require "mini.surround"
+local ts_input = mini_surround.gen_spec.input.treesitter
+mini_surround.setup {
+  mappings = {
+    add = "sa",
+    delete = "sd",
+    find = "sf",
+    find_left = "sF",
+    highlight = "sh",
+    replace = "sr",
+    update_n_lines = "sn",
+    suffix_last = "l",
+    suffix_next = "n",
+  },
+  n_lines = 100,
+  search_method = "cover_or_next",
+  custom_surroundings = {
+    -- treesitter-aware "input" specs: only matter for sd/sr/sf/sF/sh,
+    -- not sa (add doesn't need a parse). Captures come from
+    -- nvim-treesitter-textobjects' textobjects.scm.
+    f = { input = ts_input { outer = "@call.outer", inner = "@call.inner" } },
+    o = { input = ts_input { outer = "@function.outer", inner = "@function.inner" } },
+    c = { input = ts_input { outer = "@class.outer", inner = "@class.inner" } },
+    a = { input = ts_input { outer = "@parameter.outer", inner = "@parameter.inner" } },
+  },
+}
+
 vim.pack.add {
   "https://github.com/selimacerbas/live-server.nvim",
   "https://github.com/selimacerbas/markdown-preview.nvim",
 }
+
+-------------------------------
+------------- AI -------------
+-------------------------------
+
+vim.pack.add { "https://github.com/olimorris/codecompanion.nvim" }
+require("codecompanion").setup {
+  adapters = {
+    acp = {
+      claude_code = function()
+        return require("codecompanion.adapters").extend("claude_code", {
+          env = {
+            -- Pro/Max users: run `claude setup-token`, then export the result
+            -- as CLAUDE_CODE_OAUTH_TOKEN in your shell rc. Falls back to
+            -- ANTHROPIC_API_KEY if the OAuth token is unset.
+            CLAUDE_CODE_OAUTH_TOKEN = "CLAUDE_CODE_OAUTH_TOKEN",
+          },
+        })
+      end,
+    },
+  },
+  strategies = {
+    chat = { adapter = "claude_code" },
+    inline = { adapter = "claude_code" },
+    agent = { adapter = "claude_code" },
+  },
+  display = {
+    chat = {
+      window = {
+        layout = "vertical",
+        width = 0.4,
+      },
+    },
+  },
+}
+
+-- codecompanion lives under <leader>l (LLM) so claudecode.nvim can own <leader>a*
+vim.keymap.set({ "n", "v" }, "<leader>la", "<cmd>CodeCompanionActions<cr>", { desc = "LLM: [A]ctions menu" })
+vim.keymap.set({ "n", "v" }, "<leader>lc", "<cmd>CodeCompanionChat Toggle<cr>", { desc = "LLM: toggle [C]hat" })
+vim.keymap.set("v", "<leader>ld", "<cmd>CodeCompanionChat Add<cr>", { desc = "LLM: a[D]d selection to chat" })
+vim.keymap.set({ "n", "v" }, "<leader>li", "<cmd>CodeCompanion<cr>", { desc = "LLM: [I]nline transform" })
+vim.keymap.set({ "n", "v" }, "<leader>lp", function()
+  vim.ui.input({ prompt = "LLM prompt: " }, function(prompt)
+    if prompt and prompt ~= "" then
+      vim.cmd("CodeCompanion " .. prompt)
+    end
+  end)
+end, { desc = "LLM: [P]rompt-then-inline" })
+
+-------------------------------
+--------- CLAUDE CODE ---------
+-------------------------------
+
+vim.pack.add {
+  "https://github.com/folke/snacks.nvim", -- terminal backing for claudecode
+  "https://github.com/coder/claudecode.nvim",
+}
+
+require("snacks").setup {} -- minimal; claudecode only needs the terminal module
+require("claudecode").setup {}
+
+vim.keymap.set("n", "<leader>ac", "<cmd>ClaudeCode<cr>", { desc = "Claude Code: toggle terminal" })
+vim.keymap.set("n", "<leader>af", "<cmd>ClaudeCodeFocus<cr>", { desc = "Claude Code: [F]ocus" })
+vim.keymap.set("v", "<leader>as", "<cmd>ClaudeCodeSend<cr>", { desc = "Claude Code: [S]end selection" })
+vim.keymap.set("n", "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", { desc = "Claude Code: [A]ccept diff" })
+vim.keymap.set("n", "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", { desc = "Claude Code: [D]eny diff" })
 
 vim.keymap.set("n", "<leader>mps", "<cmd>MarkdownPreview<cr>", { desc = "Markdown: Start preview" })
 vim.keymap.set("n", "<leader>mpS", "<cmd>MarkdownPreviewStop<cr>", { desc = "Markdown: Stop preview" })

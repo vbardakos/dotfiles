@@ -2,6 +2,7 @@ local M = {}
 
 M.ensure_installed = {
   "stylua",
+  "codelldb", -- DAP adapter for rust / c / c++
 }
 
 local _ = {
@@ -19,7 +20,7 @@ local _ = {
 
 -- note :: will be added in ensure_installed
 M.servers = {
-  rust_analyzer = {},
+  -- rust_analyzer is managed by rustaceanvim (see plugins/init.lua)
   -- https://docs.astral.sh/ruff/editors/settings
   ruff = {
     init_options = {
