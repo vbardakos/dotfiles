@@ -106,3 +106,11 @@ opt.virtualedit = "block" -- Allow cursor to move where there is no text in visu
 opt.wildmode = "longest:full,full" -- Command-line completion mode
 opt.winminwidth = 5 -- Minimum window width
 opt.wrap = false -- Disable line wrap
+
+-- Greek layout: normal-mode keybinds work even when the keyboard is set to
+-- Greek. Insert mode, `/`-search, and `:` cmdline are left alone so you can
+-- still type Greek text. Notes:
+--   * `q` (record macro) is unreachable in Greek (the physical key produces
+--     `;`, which is vim's f/t-motion repeat; not safe to remap).
+--   * shift+w in Greek produces Σ, same as shift+s; only the latter is mapped.
+opt.langmap = "ςw,εe,ρr,τt,υy,θu,ιi,οo,πp,αa,σs,δd,φf,γg,ηh,ξj,κk,λl,ζz,χx,ψc,ωv,βb,νn,μm,ΣS,ΕE,ΡR,ΤT,ΥY,ΘU,ΙI,ΟO,ΠP,ΑA,ΔD,ΦF,ΓG,ΗH,ΞJ,ΚK,ΛL,ΖZ,ΧX,ΨC,ΩV,ΒB,ΝN,ΜM"
